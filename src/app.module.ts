@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { KnexModule } from 'nest-knexjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import appConfig from './config/app.config';
@@ -10,6 +11,14 @@ import appConfig from './config/app.config';
       isGlobal: true,
       load: [appConfig]
     }),
+
+    KnexModule.forRootAsync({
+      inject: [ConfigService],
+
+      useFactory: (config: ConfigService) => ({
+        config: config.get('database.config')
+      })
+    })
   ],
   controllers: [AppController],
   providers: [AppService],
