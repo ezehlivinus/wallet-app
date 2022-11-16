@@ -18,7 +18,7 @@ import appConfig from './config/app.config';
       useFactory: (config: ConfigService) => ({
         config: config.get('database.config')
       })
-    })
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,24 +1,29 @@
 // Update with your config settings.
-
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 export default {
 
   development: {
-    client: 'mysql',
+    client: 'mysql2',
+    version: '8',
+    useNullAsDefault: true,
     connection: {
-      host: process.env.MYSQL_HOST || '127.0.0.1',
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
+      host: '127.0.0.1',
+      user: 'root',
+      password: 'root',
+      database: 'nest'
     },
+    migrations: {
+      tableName: 'knex_migrations',
+      
+    }
   },
 
 
 
   production: {
-    client: 'mysql',
+    client: 'mysql2',
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
