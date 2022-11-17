@@ -14,24 +14,26 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
 
-  app.use(helmet())
+  app.use(helmet());
 
   app.setGlobalPrefix(configService.get('app.apiPrefix'), {
     exclude: ['/']
   });
 
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
-  app.useGlobalFilters(new HttpExceptionFilter())
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
   if (configService.get('app.envName') !== 'development') {
-    app.enableShutdownHooks()
+    app.enableShutdownHooks();
   }
 
-  setupSwagger(app)
+  setupSwagger(app);
 
-  await app.listen(configService.get('app.port'))
+  await app.listen(configService.get('app.port'));
 
-  console.info(`Application server listening on port ${configService.get('app.port')}`)
+  console.info(
+    `Application server listening on port ${configService.get('app.port')}`
+  );
 }
 bootstrap();

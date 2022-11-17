@@ -8,10 +8,9 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger('SupplyChain');
+  private readonly logger = new Logger('wallet-app');
   catch(exception: unknown, host: ArgumentsHost) {
     this.logger.error(exception);
 
@@ -24,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message: string[] | string;
       };
       return response.status(status).json({
-        success:  false,
+        success: false,
         message: Array.isArray(errorResponse.message)
           ? errorResponse.message[0]
           : errorResponse.message,

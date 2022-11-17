@@ -3,13 +3,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KnexModule } from 'nest-knexjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
 import appConfig from './config/app.config';
+import { AuthModule } from './auth/auth.module';
+import jwtConfig from './config/jwt.config';
+import databaseConfig from './config/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig]
+      load: [appConfig, databaseConfig, jwtConfig]
     }),
 
     KnexModule.forRootAsync({
@@ -19,8 +23,11 @@ import appConfig from './config/app.config';
         config: config.get('database.config')
       })
     }),
+
+    UsersModule,
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: []
 })
 export class AppModule {}

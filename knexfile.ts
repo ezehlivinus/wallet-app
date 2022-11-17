@@ -3,7 +3,6 @@
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 export default {
-
   development: {
     client: 'mysql2',
     version: '8',
@@ -15,12 +14,9 @@ export default {
       database: 'nest'
     },
     migrations: {
-      tableName: 'knex_migrations',
-      
+      tableName: 'knex_migrations'
     }
   },
-
-
 
   production: {
     client: 'mysql2',
@@ -33,5 +29,4 @@ export default {
       tableName: 'knex_migrations'
     }
   }
-
 };
