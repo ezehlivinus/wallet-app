@@ -7,9 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { SignOptions } from 'jsonwebtoken';
 import { JwtStrategy } from './auth.strategy';
 import { UsersService } from 'src/users/users.service';
+import { WalletsModule } from 'src/wallets/wallets.module';
 
 @Module({
   imports: [
+    WalletsModule,
     UsersModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

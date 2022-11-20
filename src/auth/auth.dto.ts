@@ -59,6 +59,9 @@ class _CreateUserResponseDTO extends CreateUserDto {
   id: string;
 
   @ApiProperty()
+  wallet: string;
+
+  @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()

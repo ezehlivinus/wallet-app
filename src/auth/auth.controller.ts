@@ -1,32 +1,24 @@
 import { Auth } from '../common/decorators/http.decorator';
 import { ErrorResponseDTO } from '../common/dtos/response.dto';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Put
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import {
-  CreateUserDto,
-  CreateUserResponseDTO,
-  LoginDTO
-  // LoginResponseDTO
-} from './auth.dto';
+import { CreateUserDto, CreateUserResponseDTO, LoginDTO } from './auth.dto';
 import { AuthService } from './auth.service';
+import { WalletsService } from 'src/wallets/wallets.service';
+import { CreateWalletDto } from 'src/wallets/wallet.dto';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private walletService: WalletsService
+  ) {}
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -55,6 +47,17 @@ export class AuthController {
     type: ErrorResponseDTO
   })
   async auth(@Body() body: CreateUserDto) {
-    return await this.authService.auth(body);
+    const { data, access_token } = await this.authService.auth(body);
+    const createWalletDto: CreateWalletDto = {
+      owner: data.id
+    };
+
+    const { balance, address } = await this.walletService.create(
+      createWalletDto
+    );
+
+    return {
+      data: { ...data, wallet: { address, balance }, access_token }
+    };
   }
 }

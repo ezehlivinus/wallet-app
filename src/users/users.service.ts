@@ -46,8 +46,6 @@ export class UsersService {
 
     const user = await this.findOne({ email: createUserDto.email });
 
-    console.log(user);
-
     return { user };
   }
 }
