@@ -19,6 +19,12 @@ export class WalletsService {
     return wallet;
   }
 
+  // async list() {
+  //   const wallets = await this.knex('wallets').select();
+
+  //   return wallets;
+  // }
+
   async update(filter: FindWalletDto, update: UpdateWalletDto) {
     const count = await this.knex('wallets')
       .where({ FindWalletDto })

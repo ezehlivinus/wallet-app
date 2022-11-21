@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import appConfig from './config/app.config';
 import { AuthModule } from './auth/auth.module';
 import { WalletsModule } from './wallets/wallets.module';
+import { TransactionsModule } from './transactions/transactions.module';
 import jwtConfig from './config/jwt.config';
 import databaseConfig from './config/database.config';
 
@@ -27,7 +28,8 @@ import databaseConfig from './config/database.config';
 
     UsersModule,
     AuthModule,
-    WalletsModule
+    WalletsModule,
+    TransactionsModule
   ],
   controllers: [AppController],
   providers: []
