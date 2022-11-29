@@ -8,7 +8,7 @@ export default {
     version: '8',
     useNullAsDefault: true,
     connection: {
-      host: '127.0.0.1',
+      host: '0.0.0.0',
       user: 'root',
       password: 'root',
       database: 'nest'
