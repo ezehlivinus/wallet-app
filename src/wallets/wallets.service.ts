@@ -8,8 +8,12 @@ import { randomUUID } from 'crypto';
 export class WalletsService {
   constructor(@InjectConnection() private readonly knex: Knex) {}
 
+  async generateAddress() {
+    return randomUUID().replaceAll('-', '');
+  }
+
   async create(createWalletDto: CreateWalletDto) {
-    const newAddress = randomUUID().replaceAll('-', '');
+    const newAddress = await this.generateAddress();
     createWalletDto.address = newAddress;
 
     const result = await this.knex.table('wallets').insert(createWalletDto);
@@ -26,13 +30,28 @@ export class WalletsService {
   // }
 
   async update(filter: FindWalletDto, update: UpdateWalletDto) {
-    const count = await this.knex('wallets')
-      .where({ FindWalletDto })
-      .update(update);
+    const count = await this.knex('wallets').where(filter).update(update);
 
     const updates = await this.findOne(filter);
 
     return updates[0];
+  }
+
+  async fund(filter: FindWalletDto, update: UpdateWalletDto) {
+    const trxProvider = this.knex.transactionProvider();
+    const dbTransaction = await trxProvider();
+
+    await dbTransaction('wallets')
+      .update({
+        balance: dbTransaction.raw(`?? + ${update.balance}`, ['balance'])
+      })
+      .where(filter);
+
+    await dbTransaction.commit();
+
+    const wallet = await this.findOne(filter);
+
+    return wallet;
   }
 
   async findOne(filter: FindWalletDto) {
@@ -43,5 +62,11 @@ export class WalletsService {
     }
 
     return wallet[0];
+  }
+
+  async find(filter: FindWalletDto) {
+    const wallets = await this.knex('wallets').where(filter);
+
+    return wallets;
   }
 }

@@ -30,13 +30,40 @@ export class CreateTransactionDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
-  purpose? = '';
+  purpose?: string;
 
   @ApiProperty()
   @IsNumber()
   @IsPositive()
   @IsNotEmpty()
   amount: number;
+}
+
+export class FindTransactionDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  from?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  to?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  reference?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  amount?: number;
 }

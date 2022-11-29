@@ -1,10 +1,58 @@
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString
 } from 'class-validator';
+
+export class WalletsDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
+  @ApiProperty()
+  @IsPositive()
+  @IsNotEmpty()
+  @IsNumber()
+  balance: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @IsNotEmpty()
+  owner: number;
+}
+
+export class WalletsResponseTypeDto extends WalletsDto {
+  @ApiProperty()
+  @IsDateString()
+  createdAt: Date;
+
+  @ApiProperty()
+  @IsDateString()
+  updatedAt: Date;
+
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+}
+
+export class WalletsResponseDto {
+  @ApiProperty()
+  @IsBoolean()
+  success: boolean;
+
+  @ApiProperty({
+    type: WalletsResponseTypeDto,
+    isArray: true
+  })
+  data?: [WalletsResponseTypeDto];
+}
 
 export class CreateWalletDto {
   @IsString()
@@ -41,4 +89,8 @@ export class FindWalletDto {
   @IsNumber()
   @IsOptional()
   owner?: number;
+
+  @IsNumber()
+  @IsOptional()
+  balance?: number;
 }

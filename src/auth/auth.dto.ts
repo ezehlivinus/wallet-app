@@ -54,9 +54,14 @@ export class LoginDTO {
 //   data: LoginActionDTO;
 // }
 
-class _CreateUserResponseDTO extends CreateUserDto {
+class _CreateUserResponseDTO {
   @ApiProperty()
   id: string;
+
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
   @ApiProperty()
   wallet: string;

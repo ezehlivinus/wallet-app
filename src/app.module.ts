@@ -8,14 +8,16 @@ import appConfig from './config/app.config';
 import { AuthModule } from './auth/auth.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { PaymentsModule } from './payments/payments.module';
 import jwtConfig from './config/jwt.config';
 import databaseConfig from './config/database.config';
+import paymentConfig from './config/payment.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig]
+      load: [appConfig, databaseConfig, jwtConfig, paymentConfig]
     }),
 
     KnexModule.forRootAsync({
@@ -29,7 +31,8 @@ import databaseConfig from './config/database.config';
     UsersModule,
     AuthModule,
     WalletsModule,
-    TransactionsModule
+    TransactionsModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: []
