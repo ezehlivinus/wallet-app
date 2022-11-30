@@ -169,4 +169,23 @@ export class PaymentsController {
     }
     return { data: payments };
   }
+
+  @Post('/')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Endpoint for for funding wallet and withdraw from wallet'
+  })
+  @ApiOkResponse({
+    description: 'Registration is successful',
+    type: InitializePaymentDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Credentials is invalid',
+    type: ErrorResponseDTO
+  })
+  @Auth([Roles.user])
+  async initiateTransfer(
+    @Body() initializePaymentDto: InitializePaymentDto,
+    @CurrentUser() auth: { id: number; email: string }
+  ) {}
 }

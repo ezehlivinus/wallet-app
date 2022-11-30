@@ -5,6 +5,7 @@ import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
 import {
   InitializePaymentDto,
+  InitiateTransferDto,
   PaymentDto,
   PaymentFindingDto
 } from './payments.dto';
@@ -119,5 +120,41 @@ export class PaymentsService {
     const payments = await this.knex('payments').where(filter);
 
     return payments;
+  }
+
+  async randomUniqueString(length = 10): Promise<string> {
+    const charSet =
+      'ABCDEFGHIJ012KLSTYLERSINMNOPQRSTUVWXYZ345abcdefghijklmnopq6789rstuvwxyz';
+    let randomString = '';
+    for (let count = 0; count < length; count += 1) {
+      const randomPoz = Math.floor(Math.random() * charSet.length);
+      randomString += charSet.substring(randomPoz, randomPoz + 1);
+    }
+    return randomString;
+  }
+
+  // async 
+
+  async initiateTransfer(initiateTransferDto: InitiateTransferDto) {
+    const { paystackSecretKey } = this.configService.get('payments');
+
+    const { amount } = initiateTransferDto;
+
+    const recipient = await this.randomUniqueString(10);
+
+    const reference = await this.randomString()
+
+    const url = 'https://api.paystack.co/transaction/transfer';
+
+    const bodyParams = JSON.stringify({
+      source: 'balance',
+      reason: 'Customer money Withdrawal',
+      amount: amount * 100,
+      reference,
+      recipient: `RCP_${recipient}`,
+      callback_url: 'http://localhost:9092/api/payments/callback-url'
+    });
+
+    const cmd = `curl '${url}' -H 'Content-Type: application/json' -H 'Authorization: Bearer ${paystackSecretKey}' -d '${bodyParams}' -X POST`;
   }
 }
