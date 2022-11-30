@@ -24,6 +24,18 @@ export class InitializePaymentDto {
   type: PaymentTypeDto;
 }
 
+export class InitiateTransferDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  walletAddress: string;
+}
+
 export class PaymentDto extends InitializePaymentDto {
   @ApiProperty()
   @IsString()

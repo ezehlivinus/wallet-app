@@ -5,6 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id');
     table.enum('type', ['fund', 'withdraw']);
     table.string('reference', 255).nullable();
+    table.string('transfer_code', 255).nullable();
     table.string('channel', 50).nullable();
     table.double('amount').nullable().unsigned();
     table.integer('transactionId').nullable().unsigned();
