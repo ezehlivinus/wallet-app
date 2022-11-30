@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   Redirect,
+  Req,
   Res
 } from '@nestjs/common';
 
@@ -24,7 +25,11 @@ import { ErrorResponseDTO } from 'src/common/dtos/response.dto';
 import { CreateTransactionDto } from 'src/transactions/transactions.dto';
 import { Roles, UserFindDto } from 'src/users/users.dto';
 import { WalletsService } from 'src/wallets/wallets.service';
-import { InitializePaymentDto, PaymentDto } from './payments.dto';
+import {
+  InitializePaymentDto,
+  MakeWithdrawalDto,
+  PaymentDto
+} from './payments.dto';
 import { PaymentsService } from './payments.service';
 
 @ApiTags('payments')
@@ -188,4 +193,142 @@ export class PaymentsController {
     @Body() initializePaymentDto: InitializePaymentDto,
     @CurrentUser() auth: { id: number; email: string }
   ) {}
+
+  @Post('/webhook')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Endpoint for verifying customers transfer',
+    description: 'Only consumable by paystack'
+  })
+  @ApiOkResponse({
+    description: 'Transfer was successful'
+    // type: InitializePaymentDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Credentials is invalid',
+    type: ErrorResponseDTO
+  })
+  async verifyTransfer(
+    @Req() req: express.Request,
+    @Res() res: express.Response
+  ) {
+    const data = await this.paymentsService.validateWebhookEvent(req);
+
+    return res.send(200);
+  }
+
+  @Post('/withdraw')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Endpoint that let customers to withdraw',
+    description:
+      'This for customers who want to withdraw money from their wallet'
+  })
+  @ApiOkResponse({
+    description: 'With was successful'
+    // type: InitializePaymentDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Credentials is invalid',
+    type: ErrorResponseDTO
+  })
+  @Auth([Roles.admin, Roles.user])
+  async withdraw(
+    @Body() body: MakeWithdrawalDto,
+    @CurrentUser() auth: UserFindDto
+  ) {
+    const wallet = await this.walletsService.findOne({
+      owner: auth.id,
+      address: body.walletAddress
+    });
+
+    if (!wallet) {
+      return {
+        message: 'Wallet not found'
+      };
+    }
+    const newBalance = wallet.balance - body.amount;
+    if (newBalance < 0) {
+      throw new BadRequestException('insufficient balance');
+    }
+
+    // this is not efficient
+    const update = await this.walletsService.update(
+      { address: wallet.address },
+      {
+        balance: newBalance
+      }
+    );
+
+    // verify customer account details
+    const bankDetails = await this.paymentsService.resolveAccountNumber(
+      body.accountNumber,
+      body.bankCode
+    );
+
+    // create transfer recipient using bank account
+    const newTransferRecipient =
+      await this.paymentsService.createTransferRecipient({
+        name: bankDetails.account_name,
+        accountNumber: bankDetails.account_number,
+        bankCode: body.bankCode,
+        amount: body.amount,
+        currency: 'NGN'
+      });
+    // I may save to database
+    let paymentMethod = await this.paymentsService.findOnePaymentMethod({
+      recipientCode: newTransferRecipient.recipient_code
+    });
+
+    // let newPaymentMethod;
+    if (!paymentMethod) {
+      await this.paymentsService.makeNewPaymentMethod({
+        recipientCode: newTransferRecipient.recipient_code,
+        bank: JSON.stringify(newTransferRecipient.bankDetails),
+        customer: auth.id
+      });
+    }
+
+    paymentMethod = await this.paymentsService.findOnePaymentMethod({
+      recipientCode: newTransferRecipient.recipient_code
+    });
+
+    // initiate transfer
+    const transfer = await this.paymentsService.initiateTransfer({
+      recipient: newTransferRecipient.recipient_code,
+      amount: body.amount,
+      userId: auth.id,
+      walletAddress: body.walletAddress,
+      paymentMethod: paymentMethod.id
+    });
+
+    return {
+      data: transfer
+    };
+
+    // verify transfer via webhook
+  }
+
+  @Post('/list-banks')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'List banks to find bank code',
+    description: 'List banks'
+  })
+  @ApiOkResponse({
+    description: 'With was successful'
+    // type: InitializePaymentDto
+  })
+  @ApiBadRequestResponse({
+    description: 'Credentials is invalid',
+    type: ErrorResponseDTO
+  })
+  @Auth([Roles.admin, Roles.user])
+  async listBanks() {
+    const banks = await this.paymentsService.listBanks();
+
+    return {
+      data: banks
+    };
+  }
 }

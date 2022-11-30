@@ -1,10 +1,95 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString
+} from 'class-validator';
 import { TransactionTypes } from 'src/transactions/transactions.dto';
 
 export enum PaymentTypeDto {
   fund = 'fund',
   withdraw = 'withdraw'
+}
+
+export class ResolveAccountNumberDto {
+  @ApiProperty({
+    type: String,
+    description: 'Account number',
+    example: '0001234567'
+  })
+  @IsString()
+  @IsNotEmpty()
+  accountNumber: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  bankCode: number;
+}
+
+export class MakeWithdrawalDto {
+  @ApiProperty({
+    example: '044'
+  })
+  @IsString()
+  bankCode: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Account number',
+    example: '0001234567'
+  })
+  @IsString()
+  @IsNotEmpty()
+  accountNumber: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
+
+  @ApiProperty({
+    description: 'wallet address to transfer money to'
+  })
+  @IsString()
+  @IsNotEmpty()
+  walletAddress: string;
+
+}
+
+export class CreateTransferRecipientDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  currency? = 'NGN';
+
+  @ApiProperty({
+    example: '044'
+  })
+  @IsString()
+  bankCode: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Account number',
+    example: '0001234567'
+  })
+  @IsString()
+  @IsNotEmpty()
+  accountNumber: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  amount?: number;
 }
 
 export class InitializePaymentDto {
@@ -30,10 +115,10 @@ export class InitiateTransferDto {
   @IsNumber()
   amount: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  walletAddress: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  // walletAddress: string;
 }
 
 export class PaymentDto extends InitializePaymentDto {
@@ -79,3 +164,5 @@ export class PaymentFindingDto {
   @IsString()
   walletAddress?: string;
 }
+
+
