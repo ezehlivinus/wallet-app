@@ -197,28 +197,28 @@ export class PaymentsController {
   //   @CurrentUser() auth: { id: number; email: string }
   // ) {}
 
-  @Post('/webhook')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Endpoint for verifying customers transfer',
-    description: 'Only consumable by paystack'
-  })
-  @ApiOkResponse({
-    description: 'Transfer was successful'
-    // type: InitializePaymentDto
-  })
-  @ApiBadRequestResponse({
-    description: 'Credentials is invalid',
-    type: ErrorResponseDTO
-  })
-  async verifyTransfer(
-    @Req() req: express.Request,
-    @Res() res: express.Response
-  ) {
-    const data = await this.paymentsService.validateWebhookEvent(req);
-    console.log(data);
-    return res.send(200);
-  }
+  // @Post('/webhook')
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Endpoint for verifying customers transfer',
+  //   description: 'Only consumable by paystack'
+  // })
+  // @ApiOkResponse({
+  //   description: 'Transfer was successful'
+  //   // type: InitializePaymentDto
+  // })
+  // @ApiBadRequestResponse({
+  //   description: 'Credentials is invalid',
+  //   type: ErrorResponseDTO
+  // })
+  // async verifyTransfer(
+  //   @Req() req: express.Request,
+  //   @Res() res: express.Response
+  // ) {
+  //   const data = await this.paymentsService.validateWebhookEvent(req);
+  //   console.log(data);
+  //   return res.send(200);
+  // }
 
   @Post('/withdraw')
   @HttpCode(HttpStatus.OK)
