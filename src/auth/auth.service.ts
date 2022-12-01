@@ -99,7 +99,6 @@ export class AuthService {
   }
 
   async comparePassword(password: string, userPassword: string) {
-    console.log(password, userPassword);
     return await bcrypt.compare(password, userPassword);
   }
 }
