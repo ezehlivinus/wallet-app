@@ -29,7 +29,8 @@ export class TransactionsController {
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'End point for making transactions: transfer fund to another user'
+    summary: 'End point for making transactions: transfer fund to another user',
+    description: 'from: walletAdress, to: wallet address'
   })
   @ApiOkResponse({
     description: 'Transaction was successful',

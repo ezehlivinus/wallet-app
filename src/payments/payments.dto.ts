@@ -93,7 +93,9 @@ export class CreateTransferRecipientDto {
 }
 
 export class InitializePaymentDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   @IsNotEmpty()
   walletAddress: string;
@@ -126,7 +128,9 @@ export class PaymentDto extends InitializePaymentDto {
   @IsString()
   reference: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   walletAddress: string;
 
@@ -160,7 +164,9 @@ export class PaymentFindingDto {
   @IsNumber()
   customer?: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   walletAddress?: string;
 }

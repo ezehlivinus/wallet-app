@@ -18,12 +18,16 @@ export class CreateTransactionDto {
   // @IsNotEmpty()
   // type: TransactionTypes;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   @IsNotEmpty()
   from: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   @IsNotEmpty()
   to: string;
@@ -41,12 +45,16 @@ export class CreateTransactionDto {
 }
 
 export class FindTransactionDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   @IsOptional()
   from?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '9fa2a1a3323x76f907e3feed28f4ae2'
+  })
   @IsString()
   @IsOptional()
   address?: string;
