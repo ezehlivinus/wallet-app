@@ -60,6 +60,12 @@ export class TransactionsService {
         .where('address', to)
         .first();
 
+      if (!toWallet) {
+        throw new NotFoundException(
+          'To: Wallet not found, the receiving wallet address does not exist'
+        );
+      }
+
       const promiseResult = await Promise.all([
         dbTransaction('wallets')
           .update({
