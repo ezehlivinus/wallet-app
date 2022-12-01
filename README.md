@@ -35,11 +35,17 @@ $ npm run start
 # Accessible the docs at localhost:<PORT>/api/docs
 # Before using the docs to make request make sure that your mysql database configured and is running 
 
+# database migration should only be run once
+
 # watch mode
 $ npm run start:dev
+# Run migrations
+npx knex migrate:latest
 
 # production mode
 $ npm run start:prod
+# Run migrations
+npx knex migrate:latest --env production
 ```
 
 ## Test
@@ -54,6 +60,8 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## More about database migration
+Check [Knexjs Migrations](https://knexjs.org/guide/migrations.html#migration-cli)
 
 ## Documentation
 Available at: `http://<your-host>/api/docs` e.g: `http://localhost:9092/api/docs`
