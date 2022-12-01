@@ -43,7 +43,8 @@ export class PaymentsController {
   @Post('/')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Endpoint for for funding wallet and withdraw from wallet'
+    summary: 'Endpoint for for funding wallet ',
+    description: 'A payment link would be generated use it to fund your account'
   })
   @ApiOkResponse({
     description: 'Registration is successful',
@@ -175,24 +176,24 @@ export class PaymentsController {
     return { data: payments };
   }
 
-  @Post('/')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Endpoint for for funding wallet and withdraw from wallet'
-  })
-  @ApiOkResponse({
-    description: 'Registration is successful',
-    type: InitializePaymentDto
-  })
-  @ApiBadRequestResponse({
-    description: 'Credentials is invalid',
-    type: ErrorResponseDTO
-  })
-  @Auth([Roles.user])
-  async initiateTransfer(
-    @Body() initializePaymentDto: InitializePaymentDto,
-    @CurrentUser() auth: { id: number; email: string }
-  ) {}
+  // @Post('/')
+  // @HttpCode(HttpStatus.OK)
+  // @ApiOperation({
+  //   summary: 'Endpoint for for funding wallet and withdraw from wallet'
+  // })
+  // @ApiOkResponse({
+  //   description: 'Registration is successful',
+  //   type: InitializePaymentDto
+  // })
+  // @ApiBadRequestResponse({
+  //   description: 'Credentials is invalid',
+  //   type: ErrorResponseDTO
+  // })
+  // @Auth([Roles.user])
+  // async initiateTransfer(
+  //   @Body() initializePaymentDto: InitializePaymentDto,
+  //   @CurrentUser() auth: { id: number; email: string }
+  // ) {}
 
   @Post('/webhook')
   @HttpCode(HttpStatus.OK)
@@ -213,16 +214,16 @@ export class PaymentsController {
     @Res() res: express.Response
   ) {
     const data = await this.paymentsService.validateWebhookEvent(req);
-
+    console.log(data);
     return res.send(200);
   }
 
   @Post('/withdraw')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Endpoint that let customers to withdraw',
+    summary: 'Endpoint that let customers to withdraw from their wallet',
     description:
-      'This for customers who want to withdraw money from their wallet'
+      'This for customers who want to withdraw money from their wallet. This paystack account used is not yet business starter. We can not transfer to customer at this time'
   })
   @ApiOkResponse({
     description: 'With was successful'
@@ -252,7 +253,7 @@ export class PaymentsController {
       throw new BadRequestException('insufficient balance');
     }
 
-    // this is not efficient
+    // this is not efficient, it is suppose to be a transaction
     const update = await this.walletsService.update(
       { address: wallet.address },
       {
@@ -265,7 +266,7 @@ export class PaymentsController {
       body.accountNumber,
       body.bankCode
     );
-
+    // console.log(bankDetails)
     // create transfer recipient using bank account
     const newTransferRecipient =
       await this.paymentsService.createTransferRecipient({
@@ -275,6 +276,7 @@ export class PaymentsController {
         amount: body.amount,
         currency: 'NGN'
       });
+
     // I may save to database
     let paymentMethod = await this.paymentsService.findOnePaymentMethod({
       recipientCode: newTransferRecipient.recipient_code
@@ -287,26 +289,43 @@ export class PaymentsController {
         bank: JSON.stringify(newTransferRecipient.bankDetails),
         customer: auth.id
       });
+
+      paymentMethod = await this.paymentsService.findOnePaymentMethod({
+        recipientCode: newTransferRecipient.recipient_code
+      });
     }
 
-    paymentMethod = await this.paymentsService.findOnePaymentMethod({
-      recipientCode: newTransferRecipient.recipient_code
-    });
-
     // initiate transfer
-    const transfer = await this.paymentsService.initiateTransfer({
-      recipient: newTransferRecipient.recipient_code,
-      amount: body.amount,
-      userId: auth.id,
-      walletAddress: body.walletAddress,
-      paymentMethod: paymentMethod.id
-    });
+    /**
+     * This request return this payload
+     * {
+        status: false,
+        message: 'You cannot initiate third party payouts as a starter business'
+      }
+
+      more info: 
+      - https://paystack.com/blog/product/paystack-starter-businesses
+      - https://support.paystack.com/hc/en-us/articles/360009972779-How-do-I-activate-my-Paystack-Starter-Business-
+     */
+    // const transfer = await this.paymentsService.initiateTransfer({
+    //   recipient: newTransferRecipient.recipient_code,
+    //   amount: body.amount,
+    //   userId: auth.id,
+    //   walletAddress: body.walletAddress,
+    //   paymentMethod: paymentMethod.id
+    // });
+
+    // verify transfer via webhook: webhook will take over from here
 
     return {
-      data: transfer
+      data: {
+        message:
+          'Transfer recipient was created successfully. The payment is been processed',
+        errorMessage:
+          'You cannot initiate third party payouts as a starter business',
+        newTransferRecipient
+      }
     };
-
-    // verify transfer via webhook
   }
 
   @Post('/list-banks')

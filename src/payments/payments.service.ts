@@ -163,9 +163,7 @@ export class PaymentsService {
     //     Authorization: `Bearer ${paystackSecretKey}`
     //   }
     // });
-
     const cmd = `curl '${url}' -H 'Authorization: Bearer ${paystackSecretKey}' -X GET`;
-
     const response = await this.runCmd(cmd);
 
     if (!response.status) {
@@ -252,7 +250,7 @@ export class PaymentsService {
 
     const reference = await this.randomString();
 
-    const url = 'https://api.paystack.co/transaction/transfer';
+    const url = 'https://api.paystack.co/transfer';
 
     const bodyParams = JSON.stringify({
       source: 'balance',
@@ -342,12 +340,16 @@ export class PaymentsService {
         bank: JSON.stringify({ ...data.bankDetails })
       });
 
+    await this.knex('payments')
+      .where({
+        recipientCode: data.recipient.recipient_code
+      })
+      .update({
+        transferCode: data.transfer_code
+      });
+
     return data;
   }
-
-  // async paystackWebhook() {
-  //   const { paystackSecretKey } = this.configService.get('payments');
-  // }
 
   async listBanks(): Promise<string> {
     const { paystackSecretKey } = this.configService.get('payments');
