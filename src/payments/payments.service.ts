@@ -60,7 +60,7 @@ export class PaymentsService {
       amount: amount * 100,
       reference,
       callback_url:
-        this.configService.get('app.appURL') + '/api/payments/callback-url'
+        this.configService.get('app.appURL') + '/payments/callback-url'
     });
 
     const url = 'https://api.paystack.co/transaction/initialize';

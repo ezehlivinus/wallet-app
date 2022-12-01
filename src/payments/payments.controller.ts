@@ -11,6 +11,7 @@ import {
   Req,
   Res
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import {
   ApiBadRequestResponse,
@@ -37,7 +38,8 @@ import { PaymentsService } from './payments.service';
 export class PaymentsController {
   constructor(
     private paymentsService: PaymentsService,
-    private walletsService: WalletsService
+    private walletsService: WalletsService,
+    private configService: ConfigService
   ) {}
 
   @Post('/')
