@@ -59,7 +59,8 @@ export class PaymentsService {
       email,
       amount: amount * 100,
       reference,
-      callback_url: 'http://localhost:9092/api/payments/callback-url'
+      callback_url:
+        this.configService.get('app.appURL') + '/api/payments/callback-url'
     });
 
     const url = 'https://api.paystack.co/transaction/initialize';
