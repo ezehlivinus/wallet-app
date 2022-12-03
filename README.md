@@ -18,7 +18,7 @@ Demo Credit is a mobile lending app that requires wallet functionality. This is 
 ## Installation
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 ## Setup
