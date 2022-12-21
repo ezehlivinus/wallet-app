@@ -65,7 +65,7 @@ Check [Knexjs Migrations](https://knexjs.org/guide/migrations.html#migration-cli
 
 ## Documentation
 Available at: `http://<your-host>/api/docs` e.g: `http://localhost:9092/api/docs`
-This app is available at: `https://wallet-app-production.up.railway.app/docs`
+<!-- This app is available at: `https://wallet-app-production.up.railway.app/docs` -->
 
 ## Endpoint description
 - `/auth` create a new account - if successful, a new wallet address is created for you as well
