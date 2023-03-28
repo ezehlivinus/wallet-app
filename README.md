@@ -12,9 +12,6 @@ Demo Credit is a mobile lending app that requires wallet functionality. This is 
 - A user can transfer funds to another user’s account
 - A user can withdraw funds from their account
 
-## ERD
-[database diagram](https://dbdesigner.page.link/NrAFgybVrPrQqhUR6)
-
 ## Installation
 
 ```bash
